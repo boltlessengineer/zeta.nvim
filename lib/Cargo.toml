@@ -1,0 +1,22 @@
+[workspace]
+members = ["crates/*"]
+resolver = "2"
+
+[workspace.package]
+edition = "2021"
+rust-version = "1.85"
+license = "GPL-3.0"
+version = "0.1.0"
+
+[workspace.dependencies]
+anyhow = "1.0.86"
+base64 = "0.22"
+mlua = { version = "0.10.0", features = ["module", "luajit", "macros", "anyhow"] }
+rand = "0.8.5"
+rsa = "0.9.6"
+sha2 = "0.10"
+zeta-auth = { path = "auth" }
+# use rand::{thread_rng, Rng as _};
+# use rsa::pkcs1::{DecodeRsaPublicKey, EncodeRsaPublicKey};
+# use rsa::traits::PaddingScheme;
+# use rsa::{Oaep, Pkcs1v15Encrypt, RsaPrivateKey, RsaPublicKey};
