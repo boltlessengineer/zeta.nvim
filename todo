@@ -41,7 +41,7 @@
     - (x) `api.accept` will be called from normal mode, move cursor to first edit,
         start chain of confirmations. After confirmations, no matter if user had
         skipped ("No") some edits, prediction will be cleared out from buffer.
-
+- ( ) merge edits only on insert mode
 - ( ) listen to general events like fileopen, fileclose, filerename
     - ( ) mock `vim.lsp.util.rename()` to listen to `filerename` events.
       let user to do the mocking from config
@@ -59,6 +59,7 @@
       ability to segment line-edit to multiple word edits.
       We can still show each on virtual-line as preview.
 - ( ) ability to scroll while in confirm window
+- ( ) 0 external dependencies (I'm saying about `curl`)
 
 Neovim is a modal editor, and have quite different editor events than other GUI based
 editors. It will make sense if we gather Neovim-specific datas and train model for it.
