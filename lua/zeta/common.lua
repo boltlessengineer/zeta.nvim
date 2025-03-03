@@ -1,6 +1,5 @@
 -- why I named this file common.lua?
 local prompt = require("zeta.prompt")
-local client = require("zeta.client")
 local log = require("zeta.log")
 local state = require("zeta.state")
 
@@ -22,6 +21,8 @@ local _MAX_EVENT_TOKENS = 500
 local MAX_CONTEXT_TOKENS = 150
 local MAX_REWRITE_TOKENS = 350
 local CURSOR_MARKER = "<|user_cursor_is_here|>"
+local EDITABLE_REGION_START_MARKER = "<|editable_region_start|>"
+local EDITABLE_REGION_END_MARKER = "<|editable_region_end|>"
 
 function M.request_predict_completion()
     log.debug("request predict completion")
@@ -37,7 +38,8 @@ function M.request_predict_completion()
     }
     log.debug("request body.input_events:", body.input_events)
     log.debug("request body.input_excerpt:", body.input_excerpt)
-    client.perform_predicted_edit(
+    local client = require("zeta.provider.claude")
+    client.perform_predict_edit(
         body,
         vim.schedule_wrap(function(res)
             log.debug("response:", res.output_excerpt)
@@ -50,7 +52,11 @@ function M.request_predict_completion()
             -- request again with new context.
             -- to enable this, request body should be ready on textchange even if
             -- previous request is still waiting
-            local output_excerpt = res.output_excerpt:gsub(vim.pesc(CURSOR_MARKER), "")
+            local output_excerpt = res.output_excerpt
+                :match(vim.pesc(EDITABLE_REGION_START_MARKER) .. "\n(.*)" .. vim.pesc(EDITABLE_REGION_END_MARKER))
+                :gsub(vim.pesc(CURSOR_MARKER), "")
+            -- TODO: diff between contents inside "editable_region"
+            -- as LLM response might include some unwanted strings
             local edits = M.compute_line_edits(
                 table.concat(current_editable_lines, "\n") .. "\n",
                 output_excerpt,
